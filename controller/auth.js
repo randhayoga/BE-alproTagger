@@ -1,8 +1,7 @@
 const {
   registerUser,
-  registerAdmin,
   loginUser,
-  loginAdmin,
+  changePassword,
   profile,
 } = require("../usecase/auth");
 
@@ -26,38 +25,6 @@ exports.registerUser = async (req, res, next) => {
     const data = await registerUser({
       email,
       password,
-    });
-
-    res.status(200).json({
-      message: "Success",
-      data,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-exports.registerAdmin = async (req, res, next) => {
-  try {
-    const { email, password } = req?.body;
-
-    if (email == "" || !email) {
-      return next({
-        message: "Email must be filled!",
-        statusCode: 400,
-      });
-    }
-    if (password == "" || !password) {
-      return next({
-        message: "Password must be filled!",
-        statusCode: 400,
-      });
-    }
-
-    const data = await registerAdmin({
-      email,
-      password,
-      photo,
     });
 
     res.status(200).json({
@@ -98,25 +65,19 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-exports.loginAdmin = async (req, res, next) => {
+exports.changePassword = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    console.log("Sampe");
+    const { password } = req.body;
 
-    if (email == "" || !email) {
-      return next({
-        message: "Email must be filled!",
-        statusCode: 400,
-      });
-    }
-    if (password == "" || !password) {
+    if ((password == "") | !password) {
       return next({
         message: "Password must be filled!",
         statusCode: 400,
       });
     }
 
-    // login logic
-    const data = await loginAdmin(email, password);
+    const data = await changePassword(req.user.id, password);
 
     res.status(200).json({
       message: "Success",

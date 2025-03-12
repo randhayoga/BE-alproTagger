@@ -5,31 +5,11 @@ const {
   getUserByID,
   getAdminByEmail,
   setUser,
-  setAdmin,
+  changePassword,
 } = require("../../repository/user");
 
 exports.registerUser = async (payload) => {
   let user = await setUser(payload);
-  delete user.dataValues.password;
-
-  const jwtPayload = {
-    id: user.id,
-  };
-
-  const token = jsonwebtoken.sign(jwtPayload, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-
-  const data = {
-    user,
-    token,
-  };
-
-  return data;
-};
-
-exports.registerAdmin = async (payload) => {
-  let user = await setAdmin(payload);
   delete user.dataValues.password;
 
   const jwtPayload = {
@@ -81,35 +61,15 @@ exports.loginUser = async (email, password) => {
   return data;
 };
 
-exports.loginAdmin = async (email, password) => {
-  let user = await getAdminByEmail(email);
-  if (!user) {
-    throw new Error(`Admin is not found!`);
-  }
+exports.changePassword = async (id, password) => {
+  const payload = { password: password };
+  let data = await changePassword(id, payload);
 
-  const isValid = await bcrypt.compare(password, user?.password);
-  if (!isValid) {
-    throw new Error(`Wrong password!`);
-  }
-
-  if (user?.dataValues?.password) {
-    delete user?.dataValues?.password;
+  if (data?.dataValues?.password) {
+    delete data?.dataValues?.password;
   } else {
-    delete user?.password;
+    delete data?.password;
   }
-
-  const jwtPayload = {
-    id: user.id,
-  };
-
-  const token = jsonwebtoken.sign(jwtPayload, process.env.JWT_SECRET, {
-    expiresIn: "1h",
-  });
-
-  const data = {
-    user,
-    token,
-  };
 
   return data;
 };

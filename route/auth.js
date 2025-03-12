@@ -6,14 +6,13 @@ const { authMiddleware } = require("../middleware/auth");
 
 router.post("/registerUser", authController.registerUser);
 
-router.post(
-  "/registerAdmin",
-  authMiddleware(["admin"]),
-  authController.registerAdmin
-);
-
 router.post("/loginUser", authController.loginUser);
-router.post("/loginAdmin", authController.loginAdmin);
+
+router.patch(
+  "/changePassword",
+  authMiddleware(["user", "admin"]),
+  authController.changePassword
+);
 
 router.get(
   "/profile",

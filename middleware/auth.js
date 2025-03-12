@@ -7,6 +7,7 @@ exports.authMiddleware = (roles) => async (req, res, next) => {
     const extractedToken = extractToken(token);
 
     const user = await profile(extractedToken?.id);
+
     if (!roles.includes(user?.role)) {
       return next({
         message: "Forbidden!",

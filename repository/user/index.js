@@ -1,9 +1,13 @@
 const bcrypt = require("bcrypt");
-const { Users: users } = require("../../models");
+const { user } = require("../../models");
 const { Op } = require("sequelize");
 
 exports.getUserByID = async (id) => {
   // For loggin in by Postman
+  data = await user.findAll({
+    where: { id },
+  });
+
   if (data.length > 0) {
     return data[0];
   } else {
@@ -13,10 +17,9 @@ exports.getUserByID = async (id) => {
 
 exports.getUserByEmail = async (email) => {
   // For loggin in by the web as a regular user
-  data = await users.findAll({
+  data = await user.findAll({
     where: {
       email,
-      role: "user",
     },
   });
 
@@ -29,7 +32,7 @@ exports.getUserByEmail = async (email) => {
 
 exports.getAdminByEmail = async (email) => {
   // For logging in as admin
-  data = await users.findAll({
+  data = await user.findAll({
     where: {
       email,
       role: {
@@ -47,14 +50,29 @@ exports.getAdminByEmail = async (email) => {
 
 exports.setUser = async (payload) => {
   payload.password = bcrypt.hashSync(payload.password, 10);
-  const data = await users.create(payload);
+  const data = await user.create(payload);
   return data;
 };
 
-exports.setAdmin = async (payload) => {
-  // Promoting user to admin
+exports.changePassword = async (id, payload) => {
   payload.password = bcrypt.hashSync(payload.password, 10);
-  payload.role = "admin";
-  const data = await users.create(payload);
-  return data;
+
+  await user.update(payload, {
+    where: {
+      id,
+    },
+  });
+
+  // Get data from db to show it to Postman
+  const data = await user.findAll({
+    where: {
+      id,
+    },
+  });
+
+  if (data.length > 0) {
+    return data[0];
+  } else {
+    throw new Error(`User is not found!`);
+  }
 };

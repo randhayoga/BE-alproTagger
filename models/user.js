@@ -19,9 +19,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       password: DataTypes.TEXT,
       role: DataTypes.ENUM("admin", "user"),
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
-      deleted_at: DataTypes.DATE,
+      createdAt: DataTypes.DATE,
+      updatedAt: DataTypes.DATE,
+      deletedAt: DataTypes.DATE,
     },
     {
       sequelize,
