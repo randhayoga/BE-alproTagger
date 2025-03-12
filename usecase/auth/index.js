@@ -6,7 +6,7 @@ const {
   getAdminByEmail,
   setUser,
   setAdmin,
-} = require("../../repository/users");
+} = require("../../repository/user");
 
 exports.registerUser = async (payload) => {
   let user = await setUser(payload);
